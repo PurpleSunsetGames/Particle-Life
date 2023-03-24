@@ -11,9 +11,9 @@
     background-color: #f0f0f0;
     resize: horizontal;
     overflow-x: auto;
-    width: 30%;
+    width: 10%;
     max-width: 95vh;
-    height: 45vh;
+    height: 15vh;
     opacity: .4;
     transition: 150ms linear;
     border-radius: 5px;

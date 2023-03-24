@@ -2,25 +2,27 @@
 
 let resetButton = document.getElementById("resetButton");
 
-let amount = 400;
-let particleSize = 3;
-let repulseDist = 20,
-    maxDist = 70,
+let amount = 1200;
+let repulseDist = 15,
+    maxDist = 300,
     universalMulti = 1,
     distanceMulti = 1,
     confineToEdges = true,
-    skew = .9,
-    damp = .98;
+    skew = .7,
+    damp = 1,
+    colorAmount = 5,
+    repulseForce = 300;
+
+let particleSize = 4;
 let colors = [
     "#ffffff",
     "#ff1111",
-    "#00ee11"
+    "#00ee11",
+    "#ffff11",
+    "#ff11ff"
 ]
-let forceRelations = [
-    [3, 2, 0],
-    [-1, 3, 2],
-    [2, -1, 3],
-];
+let colorFunc = 1;
+let forceRelations = [];
 let mainCanvas = document.getElementById("mainCanvas");
 console.log(mainCanvas);
 let mainCanvasCTX = mainCanvas.getContext("2d");
@@ -44,10 +46,7 @@ class particle {
         }
     }
     attr(forceFactor, x) {
-        if (x < repulseDist) {
-            return -5 * (x - repulseDist);
-        }
-        else if (x < maxDist - skew*(maxDist - repulseDist)) {
+        if (x < maxDist - skew*(maxDist - repulseDist)) {
             return (forceFactor * (x - repulseDist)) / (2*(1-skew)*(maxDist - repulseDist));
         }
         else if (x < maxDist) {
@@ -73,17 +72,26 @@ class particle {
         this.pos.y += this.vel.y;
         let sumx = 0;
         let sumy = 0;
+        let extradamp = 1;
         for (let i=0; i<particles.length; i++) {
-            if (i != this.ID) {
-                let element = particles[Number(i)];
-                let f1 = forceRelations[element.colorID][this.colorID] * universalMulti;
-                let f = this.attr(f1, distance(this.pos, element.pos)*distanceMulti) / 10000;
-                sumx += f*(this.pos.x - element.pos.x);
-                sumy += f*(this.pos.y - element.pos.y);
+            let element = particles[Number(i)];
+            let dist = distance(this.pos, element.pos)*distanceMulti;
+            if (i != this.ID && dist < maxDist) {
+                if(dist <= repulseDist) {
+                    sumx += -(repulseForce / 10000) * (dist - repulseDist)*(this.pos.x - element.pos.x);
+                    sumy += -(repulseForce / 10000) * (dist - repulseDist)*(this.pos.y - element.pos.y);
+                    extradamp = .8;
+                }
+                else {
+                    let f1 = forceRelations[element.colorID][this.colorID] * universalMulti;
+                    let f = this.attr(f1, dist) / 10000;
+                    sumx += f*(this.pos.x - element.pos.x);
+                    sumy += f*(this.pos.y - element.pos.y);
+                }
             }
         }
-        this.vel.x = damp*(this.vel.x+Number(sumx));
-        this.vel.y = damp*(this.vel.y+Number(sumy));
+        this.vel.x = extradamp * damp*(this.vel.x+Number(sumx));
+        this.vel.y = extradamp * damp*(this.vel.y+Number(sumy));
     }
 }
 function distance(p1, p2) {
@@ -127,20 +135,88 @@ let particles = [];
 
 function reset() {
     particles.length = 0;
-    for (let i=0;i<amount;i++) {
-        particles[i] = new particle(
-            Math.floor(Math.random() * (Object.keys(colors).length)), 
-            {x: Math.random()*Number(mainCanvas.width), y: Math.random()*Number(mainCanvas.height)},
-            {x: 0, y: 0},
-            1,
-            i
-        )
+    if (colorFunc === 1) {
+        for (let i=0;i<amount;i++) {
+            particles[i] = new particle(
+                Math.floor(Math.random() * (colorAmount)), 
+                {x: Math.random()*Number(mainCanvas.width), y: Math.random()*Number(mainCanvas.height)},
+                {x: 0, y: 0},
+                1,
+                i
+            )
+        }
+    }
+    else if (colorFunc === 2) {
+        for (let i=0;i<amount;i++) {
+            let x1 = Math.random()*Number(mainCanvas.width );
+            let y1 = Math.random()*Number(mainCanvas.height);
+            particles[i] = new particle(
+                Math.floor((x1 / mainCanvas.width) * colorAmount), 
+                {x: x1, y: y1},
+                {x: 0, y: 0},
+                1,
+                i
+            )
+        }
     }
 }
+function genRandomColorForces(n) {
+    let temp=[];
+    forceRelations.length=0;
+    for (let h=0;h<n**2;h++) {
+        temp[h] = (Math.random()-.5) * 16;
+    }
+    for (let w=0;w<n;w++) {
+        forceRelations.push(temp.slice(w*n, (w+1)*n));
+    }
+    console.log(forceRelations);
+}
+function genPreset1 () {
+    forceRelations.length=0;
+    forceRelations = [
+        [3,-3,-3,-3,-3],
+        [4,4,-2,0,0],
+        [4,3,10,12,2],
+        [-2,-2,23,13,3],
+        [-2,-2,-2,18,-1],
+    ]
+    reset();
+}
+function genPreset2 () {
+    forceRelations.length = 0;
+    forceRelations = [
+        [18,17,-19, 0],
+        [-19,18,17, 0],
+        [17,-19,18, 9],
+        [-5, -5, -3, 1]
+    ]
+    colorAmount = 4;
+    reset();
+}
+function genPreset3 () {
+    forceRelations.length = 0;
+    forceRelations = [
+        [1,1,-1,0,0],
+        [0,1,1,0,0],
+        [0,-1,1,1,0],
+        [0,-1,0,1,1],
+        [1,0,1,-1,0]
+    ]
+    repulseDist = 15;
+    maxDist = 300;
+    universalMulti = 1;
+    distanceMulti = 1;
+    confineToEdges = true;
+    skew = .7;
+    damp = 1;
+    colorAmount = 5,
+    repulseForce = 300;
+    colorAmount = 5;
+    reset();
+}
 
-resetButton.addEventListener("click",
-    reset
-);
+resetButton.addEventListener("click", reset);
+genRandomColorForces(colorAmount);
 reset();
 run();
 

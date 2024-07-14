@@ -1,12 +1,12 @@
 'use strict';
-
+let mouseInWorld = {x:0,y:0}
 let resetButton = document.getElementById("resetButton");
-
-let amount = 1200;
+let zoom = 1, offset=[window.innerWidth/2,window.innerHeight/2];
+let amount = 2200;
 let repulseDist = 15,
     maxDist = 300,
     universalMulti = 1,
-    distanceMulti = 1,
+    distanceMulti = 2,
     confineToEdges = true,
     skew = .7,
     damp = 1,
@@ -24,7 +24,6 @@ let colors = [
 let colorFunc = 1;
 let forceRelations = [];
 let mainCanvas = document.getElementById("mainCanvas");
-console.log(mainCanvas);
 let mainCanvasCTX = mainCanvas.getContext("2d");
 mainCanvas.style.width = String(window.innerWidth - 20) + 'px';
 mainCanvas.style.height = String(window.innerHeight - 20) + 'px';
@@ -61,10 +60,10 @@ class particle {
     }
     calcSelf() {
         if (confineToEdges) {
-            if (Math.abs((this.pos.x + this.vel.x)-mainCanvas.width/2) >= mainCanvas.width/2) {
+            if (Math.abs((this.pos.x + this.vel.x)) >= 500) {
                 this.vel.x = -.9*this.vel.x;
             }
-            if (Math.abs((this.pos.y + this.vel.y)-mainCanvas.height/2) >= mainCanvas.height/2) {
+            if (Math.abs((this.pos.y + this.vel.y)) >= 250) {
                 this.vel.y = -.9*this.vel.y;
             }
         }
@@ -111,7 +110,7 @@ function genRandomColor(){
 function point(x, y, ctx, color){
     ctx.beginPath();
     ctx.fillStyle = color;
-    ctx.arc(Number(x), Number(y), particleSize, 0, 2 * Math.PI, true);
+    ctx.arc(zoom*(Number(x)+offset[0]), zoom*(Number(y)+offset[1]), zoom*particleSize, 0, 2 * Math.PI, true);
     ctx.fill();
 }
 
@@ -139,7 +138,7 @@ function reset() {
         for (let i=0;i<amount;i++) {
             particles[i] = new particle(
                 Math.floor(Math.random() * (colorAmount)), 
-                {x: Math.random()*Number(mainCanvas.width), y: Math.random()*Number(mainCanvas.height)},
+                {x: Math.random()*Number(1000)-500, y: Math.random()*Number(500)-250},
                 {x: 0, y: 0},
                 1,
                 i
@@ -214,7 +213,30 @@ function genPreset3 () {
     colorAmount = 5;
     reset();
 }
+document.addEventListener("wheel", function(e){
+    mouseInWorld = {x:(e.clientX/zoom) - offset[0], y:(e.clientY/zoom) - offset[1]}
 
+    zoom = (zoom-((zoom*e.deltaY)/1000));
+
+    offset[0] = (e.clientX/zoom)-(mouseInWorld.x);
+    offset[1] = (e.clientY/zoom)-(mouseInWorld.y);
+})
+let mouseDown = false;
+mainCanvas.addEventListener("mousemove", (e)=>{
+    if(mouseDown){
+        offset[1] += (e.movementY) / (zoom);
+        offset[0] += (e.movementX) / (zoom);
+    }
+    mouseInWorld = {x:(e.clientX/zoom) - offset[0], y:(e.clientY/zoom) - offset[1]}
+})
+
+mainCanvas.addEventListener('mousedown', 
+() => {mouseDown = true}
+);
+
+window.addEventListener('mouseup', 
+() => {mouseDown = false}
+);
 resetButton.addEventListener("click", reset);
 genRandomColorForces(colorAmount);
 reset();

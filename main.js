@@ -1,8 +1,17 @@
 'use strict';
-let mouseInWorld = {x:0,y:0}
+
 let resetButton = document.getElementById("resetButton");
+let pauseButton = document.getElementById("pauseButton");
+let randomButton = document.getElementById("randomButton");
+let colorMenuButton = document.getElementById("colorMenuButton");
+let particleAmountInput = document.getElementById("particleAmountInput")
+
+let colorMenu = document.getElementById("colorMenu");
+
+let pause = false;
+let mouseInWorld = {x:0,y:0}
 let zoom = 1, offset=[window.innerWidth/2,window.innerHeight/2];
-let amount = 2200;
+let amount = particleAmountInput.value;
 let repulseDist = 15,
     maxDist = 300,
     universalMulti = 1,
@@ -124,8 +133,22 @@ function run() {
     mainCanvasCTX.fillRect(0, 0, mainCanvas.width, mainCanvas.height);
     for (let i=0;i<Object.keys(particles).length;i++) {
         a = particles[i];
-        a.calcSelf();
+        if(!pause){a.calcSelf();}
         a.drawSelf();
+    }
+    while (amount < particleAmountInput.value) {
+        particles.push(new particle(
+            Math.floor(Math.random() * (colorAmount)), 
+            {x: Math.random()*Number(1000)-500, y: Math.random()*Number(500)-250},
+            {x: 0, y: 0},
+            1,
+            particles.length
+        ))
+        amount++
+    }
+    if (amount > particleAmountInput.value) {
+        particles = particles.slice(0, particleAmountInput.value);
+        amount = particleAmountInput.value
     }
     requestAnimationFrame(run);
 }
@@ -213,7 +236,7 @@ function genPreset3 () {
     colorAmount = 5;
     reset();
 }
-document.addEventListener("wheel", function(e){
+mainCanvas.addEventListener("wheel", (e)=>{
     mouseInWorld = {x:(e.clientX/zoom) - offset[0], y:(e.clientY/zoom) - offset[1]}
 
     zoom = (zoom-((zoom*e.deltaY)/1000));
@@ -238,6 +261,10 @@ window.addEventListener('mouseup',
 () => {mouseDown = false}
 );
 resetButton.addEventListener("click", reset);
+pauseButton.addEventListener("click", ()=>{pause=!pause})
+randomButton.addEventListener("click", ()=>(genRandomColorForces(colorAmount)))
+colorMenuButton.addEventListener("click", ()=>{colorMenu.style.display = (colorMenu.style.display=="inherit")?"none":"inherit";})
+
 genRandomColorForces(colorAmount);
 reset();
 run();

@@ -7,10 +7,19 @@
 </head>
 <body bgcolor="#111111">
     <div id="canvasContainer">
+        <canvas class="mainCanvas" id="mainCanvas" width="100" height="100"></canvas>
         <div id="leftMenu">
-            <button id="resetButton" class="settingButton">Reset</button>
+            <button id="resetButton" class="settingButton" style="width:45%">Reset</button>
+            <button id="pauseButton" class="settingButton" style="width:45%">Pause</button>
+            <button id="randomButton" class="settingButton">Randomize Forces</button>
+            <p style="margin-right:15px;float:left;font-size:14px;font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif; margin: 5px;">Particle Count: </p><input id="particleAmountInput" type="number" value="50">
+            <button id="colorMenuButton" class="settingButton">View Force Breakdown:</button>
+            <div id="colorMenu">
+                <div>
+                    <canvas id="colorForces1"></canvas>
+                </div>
+            </div>
         </div>
-        <canvas class="mainCanvas" id="mainCanvas" width="100" height="100">
     </div>
     <script src="main.js"></script>
 </body>

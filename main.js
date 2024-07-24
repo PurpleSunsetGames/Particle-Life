@@ -5,6 +5,9 @@ let pauseButton = document.getElementById("pauseButton");
 let randomButton = document.getElementById("randomButton");
 let colorMenuButton = document.getElementById("colorMenuButton");
 let particleAmountInput = document.getElementById("particleAmountInput")
+let preset1button = document.getElementById("preset1")
+let preset2button = document.getElementById("preset2")
+let preset3button = document.getElementById("preset3")
 
 let colorMenu = document.getElementById("colorMenu");
 
@@ -14,8 +17,8 @@ let zoom = 1, offset=[window.innerWidth/2,window.innerHeight/2];
 let amount = particleAmountInput.value;
 let repulseDist = 15,
     maxDist = 300,
-    universalMulti = 1,
-    distanceMulti = 2,
+    universalMulti = .5,
+    distanceMulti = 1,
     confineToEdges = true,
     skew = .7,
     damp = 1,
@@ -38,6 +41,12 @@ mainCanvas.style.width = String(window.innerWidth - 20) + 'px';
 mainCanvas.style.height = String(window.innerHeight - 20) + 'px';
 mainCanvas.width = window.innerWidth - 20;
 mainCanvas.height = window.innerHeight - 20;
+let graphCanvas = document.getElementById("graphCanvas");
+let graphCanvasCTX = graphCanvas.getContext("2d");
+graphCanvas.style.width = String(150) + 'px';
+graphCanvas.style.height = String(150*colorAmount) + 'px';
+graphCanvas.width = 150;
+graphCanvas.height = 150*colorAmount;
 
 class particle {
     constructor(colorID, pos, vel, mass, ID){
@@ -99,7 +108,7 @@ class particle {
             }
         }
         this.vel.x = extradamp * damp*(this.vel.x+Number(sumx));
-        this.vel.y = extradamp * damp*(this.vel.y+Number(sumy));
+        this.vel.y = extradamp * damp*(this.vel.y+Number(sumy)) + .2;
     }
 }
 function distance(p1, p2) {
@@ -196,44 +205,43 @@ function genRandomColorForces(n) {
 function genPreset1 () {
     forceRelations.length=0;
     forceRelations = [
-        [3,-3,-3,-3,-3],
-        [4,4,-2,0,0],
-        [4,3,10,12,2],
-        [-2,-2,23,13,3],
-        [-2,-2,-2,18,-1],
+        [19,-3,-3,-3,13],
+        [13,19,-3,-3,-3],
+        [-3,13,19,-3,-3],
+        [-3,-3,13,19,-3],
+        [-3,-3,-3,13,19],
     ]
+    colorAmount = 5;
     reset();
 }
 function genPreset2 () {
     forceRelations.length = 0;
     forceRelations = [
-        [18,17,-19, 0],
-        [-19,18,17, 0],
-        [17,-19,18, 9],
-        [-5, -5, -3, 1]
+        [.4,.8,1.2,1.6,8],
+        [-.4,-.2,0,0,0],
+        [0,-.4,-.2,0,0],
+        [0,0,-.4,-.2,0],
+        [0,0,0,-.4,-.2]
     ]
-    colorAmount = 4;
+    colorAmount = 5;
     reset();
 }
 function genPreset3 () {
     forceRelations.length = 0;
     forceRelations = [
-        [1,1,-1,0,0],
-        [0,1,1,0,0],
-        [0,-1,1,1,0],
-        [0,-1,0,1,1],
-        [1,0,1,-1,0]
+        [1,.5,0],
+        [2,.1,0],
+        [-1,0,0]
     ]
     repulseDist = 15;
-    maxDist = 300;
+    maxDist = 100;
     universalMulti = 1;
     distanceMulti = 1;
     confineToEdges = true;
     skew = .7;
-    damp = 1;
-    colorAmount = 5,
+    damp = .8;
+    colorAmount = 3,
     repulseForce = 300;
-    colorAmount = 5;
     reset();
 }
 mainCanvas.addEventListener("wheel", (e)=>{
@@ -264,7 +272,9 @@ resetButton.addEventListener("click", reset);
 pauseButton.addEventListener("click", ()=>{pause=!pause})
 randomButton.addEventListener("click", ()=>(genRandomColorForces(colorAmount)))
 colorMenuButton.addEventListener("click", ()=>{colorMenu.style.display = (colorMenu.style.display=="inherit")?"none":"inherit";})
-
+preset1button.addEventListener("click", genPreset1)
+preset2button.addEventListener("click", genPreset2)
+preset3button.addEventListener("click", genPreset3)
 genRandomColorForces(colorAmount);
 reset();
 run();

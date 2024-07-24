@@ -3,7 +3,6 @@
     width: 100%;
     height: 95vh;
 }
-
 #leftMenu {
     position: absolute;
     background-color: #000;
@@ -11,9 +10,10 @@
     background-color: #f0f0f0;
     resize:both;
     overflow-x: auto;
-    width: 20%;
+    width: 325px;
+    min-width: 325px;
     max-width: 95vh;
-    height: 15vh;
+    height: 131px;
     opacity: .4;
     transition: 150ms linear;
     border-radius: 5px;
@@ -35,14 +35,32 @@
     border-radius: 5px;
     border:solid;
 }
+p{
+    font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-size: 14px;
+    text-wrap:nowrap;
+    text-overflow: ellipsis;
+}
 .mainCanvas {
     float: right;
     width:100%;
     height:95%;
 }
+.choiceButton{
+    font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    width: auto;
+    margin: 5px;
+    background-color: #bbb;
+    border-radius: 15px;
+    border-width: 1px;
+    border-color:#333;
+    border-style: groove;
+}
+.choiceButton:hover {
+    background-color: #999;
+}
 .settingButton{
     font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
-    width:95%;
     margin: 5px;
     float: left;
     background-color: #bbb;
@@ -105,6 +123,24 @@ input[type="number"] {
     border-radius: 5px;
     border:solid;
     border-width: 1px;
-    width:50%;
-    margin-top:5px
+    margin:5px;
+    width:80%;
+}
+.boxes {
+    margin: 10px;
+    height: max-content;
+    display: grid;
+    grid-template-columns: auto auto auto auto;
+    grid-auto-rows: 30px;
+    grid-gap: 0px;
+    grid-auto-flow:dense
+}
+.small-boxes {
+    margin: 10px;
+    height: max-content;
+    display: grid;
+    grid-template-columns: auto auto auto auto auto auto auto auto auto auto auto auto;
+    grid-auto-rows: 30px;
+    grid-gap: 0px;
+    grid-auto-flow: dense;
 }

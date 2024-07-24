@@ -8,15 +8,22 @@
 <body bgcolor="#111111">
     <div id="canvasContainer">
         <canvas class="mainCanvas" id="mainCanvas" width="100" height="100"></canvas>
-        <div id="leftMenu">
-            <button id="resetButton" class="settingButton" style="width:45%">Reset</button>
-            <button id="pauseButton" class="settingButton" style="width:45%">Pause</button>
-            <button id="randomButton" class="settingButton">Randomize Forces</button>
-            <p style="margin-right:15px;float:left;font-size:14px;font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif; margin: 5px;">Particle Count: </p><input id="particleAmountInput" type="number" value="50">
-            <button id="colorMenuButton" class="settingButton">View Force Breakdown:</button>
+        <div id="leftMenu" class="boxes">
+            <button id="resetButton" class="settingButton" style="grid-column: span 2">Reset</button>
+            <button id="pauseButton" class="settingButton" style="grid-column: span 2">Pause</button>
+            <button id="randomButton" class="settingButton" style="grid-column: span 4">Randomize Forces</button>
+            <p style="margin-right:15px; float:right; margin:5px;">Particle Count: </p><input id="particleAmountInput" type="number" value="500">
+            <div class="small-boxes" style="margin:5px;grid-column: span 2;">
+                <p style="margin-bottom:5px;margin-top:5px;float:left;grid-column: span 6;">Load Preset:</p>
+                <button id="preset1" class="choiceButton" style="width:20px">1</button>
+                <button id="preset2" class="choiceButton" style="width:20px">2</button>
+                <button id="preset3" class="choiceButton" style="width:20px">3</button>
+            </div>
+            <p style="margin-right:15px; float:left; margin:5px">Force Multiplier: </p><input id="forceMultInput" type="number" value="500">
+            <button id="colorMenuButton" class="settingButton" style="grid-column:span 2">View Force Breakdown:</button>
             <div id="colorMenu">
                 <div>
-                    <canvas id="colorForces1"></canvas>
+                    <canvas id="graphCanvas" style="grid-column: span 2; grid-row: 4;"></canvas>
                 </div>
             </div>
         </div>
